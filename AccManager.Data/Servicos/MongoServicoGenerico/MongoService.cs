@@ -1,11 +1,14 @@
-﻿using System.Linq.Expressions;
-using AccManager.Data.Models.ModelSettings;
+﻿using System;
+using System.Linq.Expressions;
+using AccManager.Data.Configurations;
+using AccManagerData.Model;
+using AccManagerData.Models.ModelSettings;
 using MongoDB.Driver;
 using X.PagedList;
 
-namespace AccManager.Data.MongoServicoGenerico
+namespace AccManagerData.MongoServicoGenerico
 {
-    public class MongoServico<TEntity> : IMongoServico<TEntity> where TEntity : Models.Entity
+    public class MongoService<TEntity> : IMongoService<TEntity> where TEntity : Models.Entity
     {
         protected IEnvioDeContasMongoSettings settings;
         protected IMongoDatabase Database;
@@ -13,13 +16,13 @@ namespace AccManager.Data.MongoServicoGenerico
 
         private int _sizePag = 10;
 
-        public MongoServico(MongoClient mongoClient, string database)
+        public MongoService(MongoClient mongoClient, string database)
         {
             this.Database = mongoClient.GetDatabase(database);
             this.MongoCollection = this.Database.GetCollection<TEntity>(typeof(TEntity).Name == "Contas" ? typeof(TEntity).Name.ToLower() : typeof(TEntity).Name);
         }
 
-        public MongoServico(IEnvioDeContasMongoSettings settings, MongoClient mongoClient)
+        public MongoService(IEnvioDeContasMongoSettings settings, MongoClient mongoClient)
         {
             this.settings = settings;
             int.TryParse(settings.SizPag, out this._sizePag);
@@ -33,11 +36,19 @@ namespace AccManager.Data.MongoServicoGenerico
 
         public void Excluir(Expression<Func<TEntity, bool>> expression) => this.MongoCollection.DeleteOne(expression);
 
-        public IPagedList ListarPaginado(int? pagina) => MongoCollection.Find(x => true).ToList().ToPagedList(pagina ?? 1, this._sizePag);
+        public Pagination<TEntity> ListarPaginado(int pagina)
+        {
+            long count = MongoCollection.CountDocuments(x => true);
+            return new Pagination<TEntity>(MongoCollection.Find(x => true).Skip((pagina - 1) * _sizePag).Limit(_sizePag).ToEnumerable(), count, pagina, _sizePag);
+        }
 
         public ICollection<TEntity> ListarTudo() => MongoCollection.Find(x => true).ToList();
 
-        public IPagedList<TEntity> Buscar(Expression<Func<TEntity, bool>> expression, int? pagina) => this.MongoCollection.Find(expression).ToList().ToPagedList(pagina ?? 1, this._sizePag);
+        public Pagination<TEntity> Buscar(Expression<Func<TEntity, bool>> expression, int pagina)
+        {
+            long count = MongoCollection.CountDocuments(x => true);
+            return new Pagination<TEntity>(MongoCollection.Find(expression).Skip((pagina - 1) * _sizePag).Limit(_sizePag).ToEnumerable(), count, pagina, _sizePag);
+        }
 
         public ICollection<TEntity> Buscar(Expression<Func<TEntity, bool>> expression) => this.MongoCollection.Find(expression).ToList();
 

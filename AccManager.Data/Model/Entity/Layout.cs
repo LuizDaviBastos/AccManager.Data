@@ -3,7 +3,7 @@ using MongoDB.Bson.Serialization.Attributes;
 using System.ComponentModel.DataAnnotations;
 
 
-namespace AccManager.Data.Models
+namespace AccManagerData.Models
 {
     public class Layout : Entity
     {

@@ -1,5 +1,5 @@
 ﻿
-namespace AccManager.Data.Models.ModelSettings
+namespace AccManagerData.Models.ModelSettings
 {
     public class ConfiguracaoSmtp : IConfiguracaoSmtp
     {

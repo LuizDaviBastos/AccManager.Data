@@ -1,7 +1,7 @@
-﻿using AccManager.Data.Model.Validation;
+﻿using AccManagerData.Model.Validation;
 using System.ComponentModel.DataAnnotations;
 
-namespace AccManager.Data.Models
+namespace AccManagerData.Models
 {
 
     public class Email : ValidaModelo<Email>

@@ -2,7 +2,7 @@
 using System.Linq;
 
 
-namespace AccManager.Data.Model.Validation
+namespace AccManagerData.Model.Validation
 {
 
     public class ValidaModelo<TEntity>

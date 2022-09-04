@@ -1,7 +1,7 @@
 ﻿using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 
-namespace AccManager.Data.Models
+namespace AccManagerData.Models
 
 {
     public class HistoricoEnvio : Entity

@@ -1,8 +1,8 @@
-﻿using AccManager.Data.Models;
-using AccManager.Data.Models.ModelSettings;
+﻿using AccManagerData.Models;
+using AccManagerData.Models.ModelSettings;
 using MongoDB.Driver;
 
-namespace AccManager.Data.SementeDeDados
+namespace AccManagerData.SementeDeDados
 {
     public class FillDataBase
     {
