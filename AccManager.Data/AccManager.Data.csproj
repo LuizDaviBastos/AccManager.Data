@@ -7,7 +7,7 @@
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
 
 	  <PackageId>AccManager</PackageId>
-	  <Version>1.0.0</Version>
+	  <Version>6.0.0</Version>
 	  <Authors>LuizDavi</Authors>
 	  <Company>GitHub</Company>
 	  <PackageDescription>Manager account using MongoDB</PackageDescription>

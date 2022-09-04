@@ -14,7 +14,7 @@ namespace AccManagerData.MongoServicoGenerico
         protected IMongoDatabase Database;
         protected IMongoCollection<TEntity> MongoCollection;
 
-        private int _sizePag = 10;
+        private int pageSize = 10;
 
         public MongoService(MongoClient mongoClient, string database)
         {
@@ -25,7 +25,7 @@ namespace AccManagerData.MongoServicoGenerico
         public MongoService(IEnvioDeContasMongoSettings settings, MongoClient mongoClient)
         {
             this.settings = settings;
-            int.TryParse(settings.SizPag, out this._sizePag);
+            int.TryParse(settings.SizPag, out this.pageSize);
             this.Database = mongoClient.GetDatabase(settings.DataBaseName);
             this.MongoCollection = this.Database.GetCollection<TEntity>(typeof(TEntity).Name == "Contas" ? typeof(TEntity).Name.ToLower() : typeof(TEntity).Name);
         }
@@ -38,16 +38,16 @@ namespace AccManagerData.MongoServicoGenerico
 
         public Pagination<TEntity> ListarPaginado(int pagina)
         {
-            long count = MongoCollection.CountDocuments(x => true);
-            return new Pagination<TEntity>(MongoCollection.Find(x => true).Skip((pagina - 1) * _sizePag).Limit(_sizePag).ToEnumerable(), count, pagina, _sizePag);
+            var results = MongoCollection.AggregateByPage(Builders<TEntity>.Filter.Empty, pagina, pageSize);
+            return new Pagination<TEntity>(results.data, results.totalPages, pagina, pageSize);
         }
 
         public ICollection<TEntity> ListarTudo() => MongoCollection.Find(x => true).ToList();
 
         public Pagination<TEntity> Buscar(Expression<Func<TEntity, bool>> expression, int pagina)
         {
-            long count = MongoCollection.CountDocuments(x => true);
-            return new Pagination<TEntity>(MongoCollection.Find(expression).Skip((pagina - 1) * _sizePag).Limit(_sizePag).ToEnumerable(), count, pagina, _sizePag);
+            var results = MongoCollection.AggregateByPage(expression, pagina, pageSize);
+            return new Pagination<TEntity>(results.data, results.totalPages, pagina, pageSize);
         }
 
         public ICollection<TEntity> Buscar(Expression<Func<TEntity, bool>> expression) => this.MongoCollection.Find(expression).ToList();
